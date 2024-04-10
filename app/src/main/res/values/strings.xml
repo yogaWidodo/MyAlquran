@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">MyAlquran</string>
+    <string name="title">Title</string>
+    <string name="content">Content</string>
+    <string name="judul_latin">Al- Fatihah</string>
+    <string name="judul_arab">الفاتحة</string>
+    <string name="ayat">%1$d Ayat</string>
+    <string name="favorite">Favorite</string>
+    <string name="teks_arab">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</string>
+    <string name="teks_latin">bismillāhir-raḥmānir-raḥīm(i)</string>
+    <string name="teks_indonesia">Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.</string>
+    <string name="_1">1</string>
+    <string name="deskripsi">Deskripsi</string>
+    <string name="tempat_turun">Mekkah</string>
+</resources>
