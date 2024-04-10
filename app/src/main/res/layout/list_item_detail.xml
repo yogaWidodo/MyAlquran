@@ -3,9 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="10dp"
     android:elevation="16dp"
     app:cardCornerRadius="15dp">
+
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,44 +24,76 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/nomor_ayat"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/_1"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_height="wrap_content">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottieAnimationView"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/gradient3"
+                    app:lottie_speed="1" />
+
+                <TextView
+                    android:id="@+id/nomor_ayat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:elevation="6dp"
+                    android:text="@string/_1"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView"
+                    app:layout_constraintEnd_toEndOf="@+id/lottieAnimationView"
+                    app:layout_constraintStart_toStartOf="@+id/lottieAnimationView"
+                    app:layout_constraintTop_toTopOf="@+id/lottieAnimationView" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <TextView
                 android:id="@+id/teks_arab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:text="@string/teks_arab"
+                tools:text="@string/teks_arab"
                 android:textColor="@color/white"
-                android:textSize="20sp"
+                android:textSize="25sp"
                 android:textStyle="bold" />
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:color="@color/white"
+                android:foreground="@color/white"
+                android:thickness="1dp"
+                />
 
             <TextView
                 android:id="@+id/teks_latin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:text="@string/teks_latin"
+                tools:text="@string/teks_latin"
                 android:textColor="@color/white"
                 android:textSize="16sp"
+                android:textAlignment="inherit"
                 android:textStyle="italic" />
 
             <TextView
-                android:layout_marginTop="10dp"
                 android:id="@+id/teks_indonesia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/teks_indonesia"
+                android:layout_marginTop="5dp"
+                tools:text="@string/teks_indonesia"
                 android:textColor="@color/white"
-                android:textAlignment="textEnd"
-                android:textSize="15sp" />
+                android:textAlignment="inherit"
+                android:textSize="14sp" />
 
         </LinearLayout>
 

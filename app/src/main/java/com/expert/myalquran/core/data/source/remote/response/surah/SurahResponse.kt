@@ -1,4 +1,5 @@
-package com.expert.myalquran.core.data.source.remote.response
+package com.expert.myalquran.core.data.source.remote.response.surah
+
 
 data class SurahResponse(
     val code: Int,
@@ -12,16 +13,8 @@ data class SurahResponse(
         val arti: String,
         val deskripsi: String,
         val nomor: Int,
-        val ayat:List<AyatItem>,
         val namaLatin: String,
     )
-        data class AyatItem(
-            val teksArab: String,
-            val teksLatin: String,
-            val nomorAyat: Int,
-            val teksIndonesia: String
-        )
-
 }
 
 

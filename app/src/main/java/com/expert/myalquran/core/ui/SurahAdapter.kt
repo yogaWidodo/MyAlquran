@@ -6,12 +6,15 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.expert.myalquran.R
-import com.expert.myalquran.core.data.source.remote.response.SurahResponse
+import com.expert.myalquran.core.data.source.remote.response.detailsurah.DetailResponse
+import com.expert.myalquran.core.data.source.remote.response.surah.SurahResponse
 import com.expert.myalquran.databinding.ListItemBinding
 
 class SurahAdapter : RecyclerView.Adapter<SurahAdapter.SurahViewHolder>() {
 
     private lateinit var onItemClickCallback: OnItemClickCallback
+    private val surahList = ArrayList<SurahResponse.DataItem>()
+    private val fullList = ArrayList<SurahResponse.DataItem>()
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
         this.onItemClickCallback = onItemClickCallback
@@ -40,6 +43,25 @@ class SurahAdapter : RecyclerView.Adapter<SurahAdapter.SurahViewHolder>() {
         set(value) {
             differ.submitList(value)
         }
+
+    fun updateList(newList: List<SurahResponse.DataItem>){
+        surahList.clear()
+        surahList.addAll(newList)
+        fullList.clear()
+        fullList.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+    fun filterList(search:String){
+        surahList.clear()
+        for (item in fullList){
+            if (item.namaLatin.lowercase().contains(search.lowercase()) == true){
+                surahList.add(item)
+            }
+        }
+        notifyDataSetChanged()
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SurahViewHolder {
         val binding =

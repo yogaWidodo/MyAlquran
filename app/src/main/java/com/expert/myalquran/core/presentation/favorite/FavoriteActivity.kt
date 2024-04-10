@@ -1,4 +1,4 @@
-package com.expert.myalquran.favorite
+package com.expert.myalquran.core.presentation.favorite
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

@@ -1,8 +1,9 @@
-package com.expert.myalquran.home
+package com.expert.myalquran.core.presentation.home
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -11,11 +12,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.expert.myalquran.R
-import com.expert.myalquran.core.data.source.remote.response.SurahResponse
+import com.expert.myalquran.core.data.source.remote.response.surah.SurahResponse
 import com.expert.myalquran.core.ui.SurahAdapter
 import com.expert.myalquran.core.utils.DataStatus
 import com.expert.myalquran.databinding.ActivityMainBinding
-import com.expert.myalquran.detail.DetailActivity
+import com.expert.myalquran.core.presentation.detail.DetailActivity
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     private val surahAdapter: SurahAdapter by lazy { SurahAdapter() }
     private lateinit var binding: ActivityMainBinding
-    val viewModel by inject<MainViewModel>()
+    private val viewModel by inject<MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,26 +46,28 @@ class MainActivity : AppCompatActivity() {
             }
         })
         getSurah()
-
-
-
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            getSurah()
+        }
 
     }
 
-    private fun getSurah(){
+    private fun getSurah() {
         lifecycleScope.launch {
             viewModel.getSurah()
             viewModel.surahList.observe(this@MainActivity) {
                 when (it.status) {
                     DataStatus.Status.LOADING -> {
-                        showProgressBar(false)
+                        binding.swipeRefreshLayout.isRefreshing = true
                     }
+
                     DataStatus.Status.SUCCESS -> {
-                        showProgressBar(true)
                         surahAdapter.differ.submitList(it.data)
+                        binding.swipeRefreshLayout.isRefreshing = false
                     }
+
                     DataStatus.Status.ERROR -> {
-                        showProgressBar(false)
+                        binding.swipeRefreshLayout.isRefreshing = false
                         Toast.makeText(
                             this@MainActivity,
                             "There is something wrong!",
@@ -77,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-   private fun appCompact() {
+    private fun appCompact() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -89,16 +92,4 @@ class MainActivity : AppCompatActivity() {
         layoutManager = LinearLayoutManager(this@MainActivity)
         adapter = surahAdapter
     }
-
-    private fun showProgressBar(isShown: Boolean) {
-        binding!!.apply {
-            if (isShown) {
-                binding.progressBar.visibility = View.GONE
-            } else {
-                binding.progressBar.visibility = View.VISIBLE
-            }
-        }
-    }
-
-
 }

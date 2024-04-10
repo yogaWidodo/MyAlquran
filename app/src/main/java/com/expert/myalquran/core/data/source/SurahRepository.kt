@@ -23,6 +23,23 @@ class SurahRepository(private val myApi: ApiInterface) {
         .catch { emit(DataStatus.error(it.message.toString())) }
         .flowOn(Dispatchers.IO)
 
+
+    suspend fun getDetailSurah(nomor: Int) = flow {
+        emit(DataStatus.loading())
+        val result = myApi.getDetailSurat(nomor)
+        when (result.code()) {
+            200 -> emit(DataStatus.success(result.body()?.data?.ayat))
+            400 -> emit(DataStatus.error(result.message()))
+            500 -> emit(DataStatus.error(result.message()))
+        }
+    }
+        .catch { emit(DataStatus.error(it.message.toString())) }
+        .flowOn(Dispatchers.IO)
+
+
+    suspend fun getSearchSurah() {
+
+    }
 }
 
 
