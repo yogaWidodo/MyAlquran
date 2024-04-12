@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
     android:elevation="16dp"
-    android:id="@+id/Cardview"
     app:cardCornerRadius="15dp">
 
     <LinearLayout
@@ -15,10 +16,16 @@
         android:orientation="horizontal"
         android:padding="20dp">
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/iconwhite" />
+        <TextView
+            android:id="@+id/judul_arab_big"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/iconwhite"
+            android:textColor="@color/white"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            tools:text="@string/judul_arab" />
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -5,6 +5,16 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".core.presentation.favorite.FavoriteActivity">
+    android:background="@drawable/backround"
+    tools:context=".presentation.favorite.FavoriteActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:padding="16dp"
+        android:id="@+id/rv_favorite"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        tools:listitem="@layout/list_item"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

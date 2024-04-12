@@ -1,6 +1,6 @@
 package com.expert.myalquran.core.di
 
-import com.expert.myalquran.core.data.source.remote.network.ApiInterface
+import com.expert.myalquran.data.source.remote.network.ApiInterface
 import com.expert.myalquran.core.utils.Constants.BASE_URL
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

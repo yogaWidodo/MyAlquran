@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backround"
-    tools:context=".core.presentation.detail.DetailActivity">
+    tools:context=".presentation.detail.DetailActivity">
 
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Cardview">
@@ -22,14 +23,11 @@
             android:id="@+id/recyclerView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Cardview"
             tools:listitem="@layout/list_item_detail" />
 
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/Cardview"
         android:layout_width="0dp"
