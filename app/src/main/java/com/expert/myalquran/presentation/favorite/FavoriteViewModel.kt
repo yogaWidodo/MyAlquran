@@ -3,10 +3,10 @@ package com.expert.myalquran.presentation.favorite
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.expert.myalquran.domain.model.response.surah.SurahResponse
-import com.expert.myalquran.domain.deleteayat_usecase.GetDeleteAyatUseCase
-import com.expert.myalquran.domain.getayat_usecase.GetAyatUseCase
-import com.expert.myalquran.domain.saveayat_usecase.GetSaveAyatUseCase
+import com.expert.myalquran.domain.surah.model.response.surahResponse.surah.SurahResponse
+import com.expert.myalquran.domain.surah.usecase.deleteayat_usecase.GetDeleteAyatUseCase
+import com.expert.myalquran.domain.surah.usecase.getayat_usecase.GetAyatUseCase
+import com.expert.myalquran.domain.surah.usecase.saveayat_usecase.GetSaveAyatUseCase
 import kotlinx.coroutines.launch
 
 

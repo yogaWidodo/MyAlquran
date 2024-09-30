@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.expert.myalquran.R
-import com.expert.myalquran.domain.model.response.detailsurah.DetailResponse
-import com.expert.myalquran.domain.model.response.surah.SurahResponse
+import com.expert.myalquran.domain.surah.model.response.surahResponse.detailsurah.DetailResponse
+import com.expert.myalquran.domain.surah.model.response.surahResponse.surah.SurahResponse
 import com.expert.myalquran.databinding.ListItemBinding
 
 class FavoriteSurahAdapter : RecyclerView.Adapter<FavoriteSurahAdapter.SurahViewHolder>() {

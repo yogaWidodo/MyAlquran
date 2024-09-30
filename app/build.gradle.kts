@@ -77,6 +77,7 @@ android {
         // lottie
         implementation("com.airbnb.android:lottie:4.2.0")
 
+        implementation("com.github.bumptech.glide:glide:4.15.1")
 
         implementation ("org.jsoup:jsoup:1.14.3")
 

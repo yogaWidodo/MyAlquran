@@ -20,6 +20,7 @@
             android:id="@+id/judul_arab_big"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/louisgeorgecafe"
             android:layout_gravity="center_vertical"
             android:src="@drawable/iconwhite"
             android:textColor="@color/white"
@@ -39,6 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:text="@string/judul_arab"
+                android:fontFamily="@font/louisgeorgecafe"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -49,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:text="@string/judul_latin"
+                android:fontFamily="@font/louisgeorgecafe"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
 
@@ -58,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:text="@string/ayat"
+                android:fontFamily="@font/louisgeorgecafe"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
 

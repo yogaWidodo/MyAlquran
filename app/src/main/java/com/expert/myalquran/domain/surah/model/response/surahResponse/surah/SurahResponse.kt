@@ -1,4 +1,4 @@
-package com.expert.myalquran.domain.model.response.surah
+package com.expert.myalquran.domain.surah.model.response.surahResponse.surah
 
 import android.os.Parcelable
 import androidx.room.Entity

@@ -12,4 +12,11 @@
     <string name="_1">1</string>
     <string name="deskripsi">Deskripsi</string>
     <string name="tempat_turun">Mekkah</string>
+    <string name="home">Home</string>
+    <string name="news">News</string>
+    <string name="setting">Setting</string>
+    <string name="islami_news">Islami News</string>
+    <string name="cari_berita">Cari Berita</string>
+    <string name="date">Date</string>
+    <string name="artinya">Artinya:</string>
 </resources>

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.expert.myalquran.R
 import com.expert.myalquran.databinding.ActivityFavoriteBinding
-import com.expert.myalquran.domain.model.response.surah.SurahResponse
+import com.expert.myalquran.domain.surah.model.response.surahResponse.surah.SurahResponse
 import com.expert.myalquran.presentation.detail.DetailActivity
 import com.expert.myalquran.presentation.ui.FavoriteSurahAdapter
 import com.google.android.material.snackbar.Snackbar

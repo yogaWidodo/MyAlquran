@@ -1,8 +1,8 @@
-package com.expert.myalquran.domain.surah_usecase
+package com.expert.myalquran.domain.surah.usecase.surah_usecase
 
 import com.expert.myalquran.core.utils.DataStatus
-import com.expert.myalquran.domain.model.response.surah.SurahResponse
-import com.expert.myalquran.domain.repository.ISurahRepository
+import com.expert.myalquran.domain.surah.model.response.surahResponse.surah.SurahResponse
+import com.expert.myalquran.domain.surah.repository.ISurahRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

@@ -2,23 +2,20 @@ package com.expert.myalquran.presentation.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.expert.myalquran.R
-import com.expert.myalquran.domain.model.response.surah.SurahResponse
+import com.expert.myalquran.domain.surah.model.response.surahResponse.surah.SurahResponse
 import com.expert.myalquran.presentation.ui.SurahAdapter
 import com.expert.myalquran.core.utils.DataStatus
 import com.expert.myalquran.databinding.ActivityMainBinding
 import com.expert.myalquran.presentation.detail.DetailActivity
 import com.expert.myalquran.presentation.favorite.FavoriteActivity
-import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
@@ -33,6 +30,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         appCompact()
         setupRecyclerView()
+        getSurah()
+        navigationMenu()
         surahAdapter.setOnItemClickCallback(object : SurahAdapter.OnItemClickCallback {
             override fun onItemClicked(data: SurahResponse.DataItem) {
                 val intent = Intent(this@MainActivity, DetailActivity::class.java)
@@ -40,11 +39,10 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
-        getSurah()
         binding.swipeRefreshLayout.setOnRefreshListener {
             getSurah()
         }
-        binding.floatingActionButton.setOnClickListener {
+        binding.icFavorite.setOnClickListener {
             val intent = Intent(this@MainActivity, FavoriteActivity::class.java)
             startActivity(intent)
         }
@@ -87,6 +85,20 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+    }
+    private fun navigationMenu() {
+//        binding.bottomNavigationView.setOnItemSelectedListener {
+//            when (it.itemId) {
+//
+//                R.id.favorite -> {
+//                    val intent = Intent(this@MainActivity, FavoriteActivity::class.java)
+//                    startActivity(intent)
+//                    true
+//                }
+//
+//                else -> false
+//            }
+//        }
     }
 
     private fun getSurah() {

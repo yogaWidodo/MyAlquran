@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.expert.myalquran.domain.model.response.detailsurah.DetailResponse
+import com.expert.myalquran.domain.surah.model.response.surahResponse.detailsurah.DetailResponse
 import com.expert.myalquran.databinding.ListItemDetailBinding
 
 class DetailSurahAdapter : RecyclerView.Adapter<DetailSurahAdapter.MyViewHolder>() {

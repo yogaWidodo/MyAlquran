@@ -1,9 +1,9 @@
-package com.expert.myalquran.domain.repository
+package com.expert.myalquran.domain.surah.repository
 
 import androidx.lifecycle.LiveData
 import com.expert.myalquran.data.source.local.room.AyatDao
-import com.expert.myalquran.domain.model.response.detailsurah.DetailResponse
-import com.expert.myalquran.domain.model.response.surah.SurahResponse
+import com.expert.myalquran.domain.surah.model.response.surahResponse.detailsurah.DetailResponse
+import com.expert.myalquran.domain.surah.model.response.surahResponse.surah.SurahResponse
 import retrofit2.Response
 
 interface ISurahRepository {

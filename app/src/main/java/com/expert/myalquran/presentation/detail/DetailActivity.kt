@@ -12,7 +12,7 @@ import com.expert.myalquran.R
 import com.expert.myalquran.presentation.ui.DetailSurahAdapter
 import com.expert.myalquran.core.utils.DataStatus
 import com.expert.myalquran.databinding.ActivityDetailBinding
-import com.expert.myalquran.domain.model.response.surah.SurahResponse
+import com.expert.myalquran.domain.surah.model.response.surahResponse.surah.SurahResponse
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 

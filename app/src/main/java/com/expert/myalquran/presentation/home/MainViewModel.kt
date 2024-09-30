@@ -4,11 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.expert.myalquran.domain.model.response.surah.SurahResponse
+import com.expert.myalquran.domain.surah.model.response.surahResponse.surah.SurahResponse
 import com.expert.myalquran.core.utils.DataStatus
-import com.expert.myalquran.domain.surah_usecase.GetSurahUseCase
+import com.expert.myalquran.domain.surah.usecase.surah_usecase.GetSurahUseCase
 import kotlinx.coroutines.launch
-import retrofit2.Response
 
 
 class MainViewModel(private val getUseCase: GetSurahUseCase) : ViewModel() {

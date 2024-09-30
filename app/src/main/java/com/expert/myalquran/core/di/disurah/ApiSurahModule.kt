@@ -1,4 +1,4 @@
-package com.expert.myalquran.core.di
+package com.expert.myalquran.core.di.disurah
 
 import com.expert.myalquran.data.source.remote.network.ApiInterface
 import com.expert.myalquran.core.utils.Constants.BASE_URL
@@ -34,7 +34,8 @@ fun provideRetrofit(gson: Gson, client: OkHttpClient): ApiInterface =
         .build()
         .create(ApiInterface::class.java)
 
-val apiModule = module {
+
+val apiSurahModule = module {
     single { provideGson() }
     single { provideOkHttpClient() }
     single { provideRetrofit(get(), get()) }
