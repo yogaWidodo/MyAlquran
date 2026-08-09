@@ -13,5 +13,5 @@ object Constants {
      *
      * Dari emulator Android, host loopback-nya http://10.0.2.2:8090/
      */
-    const val BASE_URL_VIDA = "http://192.168.1.107:8090/"
+    const val BASE_URL_VIDA = "http://192.168.1.151:8085/"
 }

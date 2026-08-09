@@ -17,16 +17,6 @@
         android:theme="@style/Theme.MyAlquran"
         tools:targetApi="31" >
 
-        <!--
-          LATIHAN VIDA - credential yang disuntik lewat manifestPlaceholders.
-          Nilai ${sdkActivationKey} diisi saat merge manifest dari
-          app/build.gradle.kts per flavor. Kalau placeholder tidak terdefinisi,
-          manifest merger gagal dengan pesan yang menyebut nama placeholder-nya.
-        -->
-        <meta-data
-            android:name="sdk_activation_key"
-            android:value="${sdkActivationKey}" />
-
         <activity
             android:name=".presentation.vida.VidaActivity"
             android:exported="false" />
@@ -47,6 +37,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--
+          Credential yang disuntik lewat manifestPlaceholders. Nilai
+          ${vidaActivationKey} diisi saat merge manifest dari
+          app/build.gradle.kts per flavor. Kalau placeholder tidak terdefinisi
+          di salah satu flavor, manifest merger gagal dan pesannya menyebut
+          nama placeholder-nya.
+        -->
+        <meta-data
+            android:name="vida_activation_key"
+            android:value="${vidaActivationKey}" />
     </application>
 
 </manifest>

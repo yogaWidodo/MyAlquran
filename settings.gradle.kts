@@ -34,14 +34,14 @@ if (localPropsFile.exists()) {
 // Prioritas: env var (CD) -> local.properties (dev) -> kosong
 //
 // === GROOVY (seperti di project kantor) ===
-// def sdkSecret = { String envKey, String localKey ->
+// def vidaSecret = { String envKey, String localKey ->
 //     def fromEnv = System.getenv(envKey)
 //     if (fromEnv != null && !fromEnv.isEmpty()) return fromEnv
 //     def fromLocal = localProps.getProperty(localKey)
 //     if (fromLocal != null && !fromLocal.isEmpty()) return fromLocal
 //     return ""
 // }
-fun sdkSecret(envKey: String, localKey: String): String {
+fun vidaSecret(envKey: String, localKey: String): String {
     val fromEnv = System.getenv(envKey)
     if (!fromEnv.isNullOrEmpty()) return fromEnv
     val fromLocal = localProps.getProperty(localKey)
@@ -87,22 +87,33 @@ dependencyResolutionManagement {
                 it.lowercase().contains("prod")
             }
 
-            val sandboxUrl = (providers.gradleProperty("sdkRepoSandboxUrl").orNull
-                ?: "http://127.0.0.1:8081/maven")
-            val prodUrl = (providers.gradleProperty("sdkRepoProdUrl").orNull
-                ?: "http://127.0.0.1:8082/maven")
+            // URL dan group diambil dari local.properties (atau env var di CD),
+            // BUKAN ditulis di sini - hostname internal perusahaan tidak boleh
+            // ikut ter-commit, repo ini PUBLIC. Fallback-nya echo server lokal
+            // supaya repo tetap bisa dibangun tanpa akses jaringan VIDA.
+            val sandboxUrl = vidaSecret("VIDA_REPO_URL_SANDBOX", "vida.repoUrlSandbox")
+                .ifEmpty { "http://127.0.0.1:8081/maven" }
+            val prodUrl = vidaSecret("VIDA_REPO_URL_PROD", "vida.repoUrlProd")
+                .ifEmpty { "http://127.0.0.1:8082/maven" }
+            val sdkGroup = vidaSecret("VIDA_REPO_GROUP", "vida.repoGroup")
+                .ifEmpty { "com.vida.rehearsal" }
 
             name = "vidaSdkRepo"
             url = uri(if (isProdBuild) prodUrl else sandboxUrl)
 
-            // Echo server latihan memakai http polos; Gradle menolak non-https
-            // kecuali diizinkan eksplisit. Di project kantor URL-nya https,
-            // jadi baris ini TIDAK ada di sana.
+            // Hanya berpengaruh untuk URL http polos, yaitu echo server latihan.
+            // URL VIDA asli https, jadi baris ini tidak melonggarkan apa pun
+            // untuknya. Di project kantor baris ini TIDAK ada.
             isAllowInsecureProtocol = true
 
             credentials(HttpHeaderCredentials::class) {
                 name = "x-api-key"
-                value = sdkSecret("SDK_REPO_KEY", "sdk.repoKey")
+                // Kedua argumen ini NAMA, bukan nilai: yang pertama nama env
+                // var (dipakai CD), yang kedua nama properti di
+                // local.properties (dipakai dev). Menaruh credential asli di
+                // baris ini akan membocorkannya ke repo public - dan tetap
+                // tidak berfungsi, karena yang dicari getenv() adalah namanya.
+                value = vidaSecret("VIDA_REPO_KEY", "vida.repoKey")
             }
             authentication {
                 create<HttpHeaderAuthentication>("header")
@@ -110,9 +121,10 @@ dependencyResolutionManagement {
 
             // Kunci repo ini hanya untuk group SDK. Tanpa ini, setiap dependency
             // yang tidak ketemu di google()/mavenCentral() akan ikut menembak
-            // server latihan dan bikin build gagal saat server mati.
+            // repo VIDA - artinya header x-api-key terkirim untuk artifact yang
+            // tidak ada hubungannya, dan build gagal saat repo tak terjangkau.
             content {
-                includeGroup("com.vida.rehearsal")
+                includeGroup(sdkGroup)
             }
         }
     }

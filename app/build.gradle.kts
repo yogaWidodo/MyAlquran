@@ -30,17 +30,17 @@ if (localPropsFile.exists()) {
     localPropsFile.inputStream().use { localProps.load(it) }
 }
 
-// Prioritas: env var (CD) -> local.properties (dev) -> kosong
+// Prioritas: env var (CI) -> local.properties (dev) -> kosong
 //
 // === GROOVY (project kantor) ===
-// def sdkSecret = { String envKey, String localKey ->
+// def vidaSecret = { String envKey, String localKey ->
 //     def fromEnv = System.getenv(envKey)
 //     if (fromEnv != null && !fromEnv.isEmpty()) return fromEnv
 //     def fromLocal = localProps.getProperty(localKey)
 //     if (fromLocal != null && !fromLocal.isEmpty()) return fromLocal
 //     return ""
 // }
-fun sdkSecret(envKey: String, localKey: String): String {
+fun vidaSecret(envKey: String, localKey: String): String {
     val fromEnv = System.getenv(envKey)
     if (!fromEnv.isNullOrEmpty()) return fromEnv
     val fromLocal = localProps.getProperty(localKey)
@@ -48,25 +48,25 @@ fun sdkSecret(envKey: String, localKey: String): String {
     return ""
 }
 
-// Fail-fast: build gagal kalau credential kosong.
+// Fail-fast: dipanggil dari tiap flavor.
 //
 // === GROOVY (project kantor) ===
-// def requireSdkSecret = { String envKey, String localKey, String flavorName ->
-//     def value = sdkSecret(envKey, localKey)
+// def requireVidaSecret = { String envKey, String localKey, String flavorName ->
+//     def value = vidaSecret(envKey, localKey)
 //     if (value.isEmpty()) {
 //         throw new GradleException(
-//             "Secret '${envKey}' kosong untuk flavor '${flavorName}'. " +
-//             "Set env var ${envKey} (CD) atau properti ${localKey} di local.properties (dev)."
+//                 "VIDA secret '${envKey}' kosong untuk flavor '${flavorName}'. " +
+//                         "Set env var ${envKey} (CI) atau properti ${localKey} di local.properties (dev)."
 //         )
 //     }
 //     return value
 // }
-fun requireSdkSecret(envKey: String, localKey: String, flavorName: String): String {
-    val value = sdkSecret(envKey, localKey)
+fun requireVidaSecret(envKey: String, localKey: String, flavorName: String): String {
+    val value = vidaSecret(envKey, localKey)
     if (value.isEmpty()) {
         throw GradleException(
-            "Secret '$envKey' kosong untuk flavor '$flavorName'. " +
-                "Set env var $envKey (CD) atau properti $localKey di local.properties (dev)."
+            "VIDA secret '$envKey' kosong untuk flavor '$flavorName'. " +
+                    "Set env var $envKey (CI) atau properti $localKey di local.properties (dev)."
         )
     }
     return value
@@ -119,24 +119,22 @@ android {
             versionNameSuffix = "-sit"
 
             // === GROOVY (project kantor) ===
-            // buildConfigField 'String', 'API_KEY_SDK',
-            //     "\"${requireSdkSecret('SDK_API_KEY', 'sdk.apiKey', 'sit')}\""
+            // buildConfigField 'String', 'API_KEY_VIDA',
+            //     "\"${requireVidaSecret('VIDA_API_KEY', 'vida.apiKey', 'sit')}\""
             buildConfigField(
-                "String", "API_KEY_SDK",
-                "\"${requireSdkSecret("SDK_API_KEY", "sdk.apiKey", "sit")}\""
+                "String", "API_KEY_VIDA",
+                "\"${requireVidaSecret("VIDA_API_KEY", "vida.apiKey", "sit")}\""
             )
             buildConfigField(
-                "String", "LICENSE_KEY_SDK",
-                "\"${requireSdkSecret("SDK_LICENSE_KEY", "sdk.licenseKey", "sit")}\""
+                "String", "LICENSE_KEY_VIDA",
+                "\"${requireVidaSecret("VIDA_LICENSE_KEY", "vida.licenseKey", "sit")}\""
             )
 
             // === GROOVY (project kantor) ===
-            // manifestPlaceholders = [
-            //     sdkActivationKey: requireSdkSecret('SDK_ACTIVATION_KEY', 'sdk.activationKey', 'sit')
-            // ]
+            // manifestPlaceholders = [ vidaActivationKey: requireVidaSecret('VIDA_ACTIVATION_KEY', 'vida.activationKey', 'sit') ]
             // Kotlin DSL tidak menerima bentuk `= [ ... ]`; pakai indexing.
-            manifestPlaceholders["sdkActivationKey"] =
-                requireSdkSecret("SDK_ACTIVATION_KEY", "sdk.activationKey", "sit")
+            manifestPlaceholders["vidaActivationKey"] =
+                requireVidaSecret("VIDA_ACTIVATION_KEY", "vida.activationKey", "sit")
         }
 
         // Tiga flavor berikut bentuknya sama persis, hanya berbeda nama flavor
@@ -146,15 +144,15 @@ android {
             applicationIdSuffix = ".uat"
             versionNameSuffix = "-uat"
             buildConfigField(
-                "String", "API_KEY_SDK",
-                "\"${requireSdkSecret("SDK_API_KEY", "sdk.apiKey", "uat")}\""
+                "String", "API_KEY_VIDA",
+                "\"${requireVidaSecret("VIDA_API_KEY", "vida.apiKey", "uat")}\""
             )
             buildConfigField(
-                "String", "LICENSE_KEY_SDK",
-                "\"${requireSdkSecret("SDK_LICENSE_KEY", "sdk.licenseKey", "uat")}\""
+                "String", "LICENSE_KEY_VIDA",
+                "\"${requireVidaSecret("VIDA_LICENSE_KEY", "vida.licenseKey", "uat")}\""
             )
-            manifestPlaceholders["sdkActivationKey"] =
-                requireSdkSecret("SDK_ACTIVATION_KEY", "sdk.activationKey", "uat")
+            manifestPlaceholders["vidaActivationKey"] =
+                requireVidaSecret("VIDA_ACTIVATION_KEY", "vida.activationKey", "uat")
         }
 
         create("mock") {
@@ -162,30 +160,30 @@ android {
             applicationIdSuffix = ".mock"
             versionNameSuffix = "-mock"
             buildConfigField(
-                "String", "API_KEY_SDK",
-                "\"${requireSdkSecret("SDK_API_KEY", "sdk.apiKey", "mock")}\""
+                "String", "API_KEY_VIDA",
+                "\"${requireVidaSecret("VIDA_API_KEY", "vida.apiKey", "mock")}\""
             )
             buildConfigField(
-                "String", "LICENSE_KEY_SDK",
-                "\"${requireSdkSecret("SDK_LICENSE_KEY", "sdk.licenseKey", "mock")}\""
+                "String", "LICENSE_KEY_VIDA",
+                "\"${requireVidaSecret("VIDA_LICENSE_KEY", "vida.licenseKey", "mock")}\""
             )
-            manifestPlaceholders["sdkActivationKey"] =
-                requireSdkSecret("SDK_ACTIVATION_KEY", "sdk.activationKey", "mock")
+            manifestPlaceholders["vidaActivationKey"] =
+                requireVidaSecret("VIDA_ACTIVATION_KEY", "vida.activationKey", "mock")
         }
 
         create("prod") {
             dimension = "environment"
             // prod tidak memakai suffix - applicationId-nya yang asli.
             buildConfigField(
-                "String", "API_KEY_SDK",
-                "\"${requireSdkSecret("SDK_API_KEY", "sdk.apiKey", "prod")}\""
+                "String", "API_KEY_VIDA",
+                "\"${requireVidaSecret("VIDA_API_KEY", "vida.apiKey", "prod")}\""
             )
             buildConfigField(
-                "String", "LICENSE_KEY_SDK",
-                "\"${requireSdkSecret("SDK_LICENSE_KEY", "sdk.licenseKey", "prod")}\""
+                "String", "LICENSE_KEY_VIDA",
+                "\"${requireVidaSecret("VIDA_LICENSE_KEY", "vida.licenseKey", "prod")}\""
             )
-            manifestPlaceholders["sdkActivationKey"] =
-                requireSdkSecret("SDK_ACTIVATION_KEY", "sdk.activationKey", "prod")
+            manifestPlaceholders["vidaActivationKey"] =
+                requireVidaSecret("VIDA_ACTIVATION_KEY", "vida.activationKey", "prod")
         }
     }
     compileOptions {
@@ -204,58 +202,78 @@ android {
     }
 }
 
-    dependencies {
+dependencies {
 
-        implementation(libs.androidx.core.ktx)
-        implementation(libs.androidx.appcompat)
-        implementation(libs.material)
-        implementation(libs.androidx.activity)
-        implementation(libs.androidx.constraintlayout)
-        testImplementation(libs.junit)
-        androidTestImplementation(libs.androidx.junit)
-        androidTestImplementation(libs.androidx.espresso.core)
-        val roomVersion = "2.6.1"
-        implementation("androidx.room:room-ktx:$roomVersion")
-        implementation("androidx.room:room-runtime:$roomVersion")
-        ksp("androidx.room:room-compiler:$roomVersion")
-        androidTestImplementation("androidx.room:room-testing:$roomVersion")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-ktx:$roomVersion")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+    androidTestImplementation("androidx.room:room-testing:$roomVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
 
-        //DI
-        val koin_version = "3.3.2"
-        implementation("io.insert-koin:koin-core:$koin_version")
-        implementation("io.insert-koin:koin-android:$koin_version")
+    //DI
+    val koin_version = "3.3.2"
+    implementation("io.insert-koin:koin-core:$koin_version")
+    implementation("io.insert-koin:koin-android:$koin_version")
 
-        //API
-        implementation("com.squareup.retrofit2:retrofit:2.9.0")
-        implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-        implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
-        implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    //API
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
 
-        // circle image
-        implementation("de.hdodenhof:circleimageview:3.1.0")
+    // circle image
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 
-        // lottie
-        implementation("com.airbnb.android:lottie:4.2.0")
+    // lottie
+    implementation("com.airbnb.android:lottie:4.2.0")
 
-        implementation("com.github.bumptech.glide:glide:4.15.1")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
 
-        implementation ("org.jsoup:jsoup:1.14.3")
+    implementation("org.jsoup:jsoup:1.14.3")
 
-        implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
-        implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
 
-        implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
-        // Stub SDK - HANYA untuk membuktikan header x-api-key benar-benar
-        // terkirim ke maven repo. Ini bukan SDK VIDA asli dan tidak menarik
-        // artifact asli apa pun.
-        //
-        // Sengaja di balik flag supaya build sehari-hari tidak bergantung pada
-        // echo server yang harus hidup:
-        //     ./gradlew :app:assembleSitRelease -PwithSdkStub
-        if (providers.gradleProperty("withSdkStub").isPresent) {
-            implementation("com.vida.rehearsal:vida-sdk-stub:1.0.0")
-        }
-    }
+    // SDK VIDA ASLI. Ditarik dari maven repo ber-header x-api-key yang
+    // dikonfigurasi di settings.gradle.kts. Credential dan URL-nya datang dari
+    // local.properties (dev) atau env var SDK_* / VIDA_* (CD) - tidak pernah
+    // dari file ini, karena repo ini PUBLIC.
+    //
+    // ARTIFACT BERBEDA PER FLAVOR. sit/uat/mock memakai varian `-sandbox`,
+    // prod TIDAK. Ini yang bikin `implementation(...)` polos berbahaya: satu
+    // baris untuk semua flavor berarti build prod diam-diam membawa SDK
+    // sandbox, dan tidak ada gejala apa pun saat build - beda dengan jebakan
+    // isProdBuild di settings.gradle.kts yang setidaknya gagal resolusi.
+    //
+    // AGP membuat konfigurasi <flavor>Implementation untuk tiap flavor. Di
+    // Kotlin DSL namanya dipanggil sebagai string karena dibuat dinamis.
+    val vidaVersion = "1.9.1"
+    "sitImplementation"("id.vida:liveness-sandbox:$vidaVersion")
+    "uatImplementation"("id.vida:liveness-sandbox:$vidaVersion")
+    "mockImplementation"("id.vida:liveness-sandbox:$vidaVersion")
+
+    // prod SENGAJA BELUM DIAKTIFKAN.
+    // Alasan: credential yang tersedia baru untuk sandbox, dan nama artifact
+    // produksinya belum dipastikan - `liveness` di bawah masih tebakan yang
+    // belum pernah diverifikasi ke sdk-repo.vida.id.
+    //
+    // Selama baris ini mati, build prod TETAP JALAN tapi TANPA SDK VIDA sama
+    // sekali. Aman untuk sekarang karena belum ada kode yang memanggil kelas
+    // SDK-nya - tapi begitu ada, prod akan gagal compile, bukan diam-diam
+    // salah. Aktifkan setelah credential prod ada DAN nama artifact-nya
+    // dikonfirmasi ke VIDA.
+    // "prodImplementation"("id.vida:liveness:$vidaVersion")
+
+}

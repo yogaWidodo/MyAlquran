@@ -162,8 +162,8 @@ class VidaActivity : AppCompatActivity() {
             "${BASE_URL_VIDA}liveness/decision"
         )
         binding.tvCredential.text = listOf(
-            "API_KEY_SDK" to BuildConfig.API_KEY_SDK,
-            "LICENSE_KEY_SDK" to BuildConfig.LICENSE_KEY_SDK,
+            "API_KEY_VIDA" to BuildConfig.API_KEY_VIDA,
+            "LICENSE_KEY_VIDA" to BuildConfig.LICENSE_KEY_VIDA,
         ).joinToString("\n") { (name, value) ->
             val status = if (value.isNotEmpty()) "OK (len=${value.length})" else "MISS"
             "BuildConfig.$name : $status"

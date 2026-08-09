@@ -33,13 +33,23 @@ on:
         required: true
         type: string
     secrets:
-      SDK_REPO_KEY:
+      VIDA_REPO_KEY:
         required: false
-      SDK_API_KEY:
+      VIDA_API_KEY:
         required: false
-      SDK_LICENSE_KEY:
+      VIDA_LICENSE_KEY:
         required: false
-      SDK_ACTIVATION_KEY:
+      VIDA_ACTIVATION_KEY:
+        required: false
+      # Bukan credential, tapi tetap lewat secret supaya hostname internal
+      # tidak ikut tertulis di file workflow - repo ini public.
+      # Tanpa ketiganya, settings.gradle.kts jatuh ke echo server lokal
+      # (127.0.0.1) yang tidak ada di runner, dan resolusi SDK gagal.
+      VIDA_REPO_URL_SANDBOX:
+        required: false
+      VIDA_REPO_URL_PROD:
+        required: false
+      VIDA_REPO_GROUP:
         required: false
 
 permissions:
@@ -70,10 +80,10 @@ jobs:
       - name: Cek credential sampai ke runner
         env:
           PROBE_ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
-          SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
-          SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
-          SDK_LICENSE_KEY: ${{ secrets.SDK_LICENSE_KEY }}
-          SDK_ACTIVATION_KEY: ${{ secrets.SDK_ACTIVATION_KEY }}
+          VIDA_REPO_KEY: ${{ secrets.VIDA_REPO_KEY }}
+          VIDA_API_KEY: ${{ secrets.VIDA_API_KEY }}
+          VIDA_LICENSE_KEY: ${{ secrets.VIDA_LICENSE_KEY }}
+          VIDA_ACTIVATION_KEY: ${{ secrets.VIDA_ACTIVATION_KEY }}
         run: |
           missing=0
           report() {
@@ -88,10 +98,10 @@ jobs:
           }
           echo "environment : $PROBE_ENVIRONMENT"
           echo "--------------------------------------------"
-          report SDK_REPO_KEY       "$SDK_REPO_KEY"
-          report SDK_API_KEY        "$SDK_API_KEY"
-          report SDK_LICENSE_KEY    "$SDK_LICENSE_KEY"
-          report SDK_ACTIVATION_KEY "$SDK_ACTIVATION_KEY"
+          report VIDA_REPO_KEY       "$VIDA_REPO_KEY"
+          report VIDA_API_KEY        "$VIDA_API_KEY"
+          report VIDA_LICENSE_KEY    "$VIDA_LICENSE_KEY"
+          report VIDA_ACTIVATION_KEY "$VIDA_ACTIVATION_KEY"
           if [ "$missing" -gt 0 ]; then
             echo
             echo "::error::$missing credential tidak sampai ke runner." \
@@ -104,10 +114,15 @@ jobs:
           # Inilah jalur yang dilatih: env var di step build. Helper
           # sdkSecret() di Gradle memprioritaskan env var di atas
           # local.properties, dan local.properties memang tidak ada di runner.
-          SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
-          SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
-          SDK_LICENSE_KEY: ${{ secrets.SDK_LICENSE_KEY }}
-          SDK_ACTIVATION_KEY: ${{ secrets.SDK_ACTIVATION_KEY }}
+          VIDA_REPO_KEY: ${{ secrets.VIDA_REPO_KEY }}
+          VIDA_API_KEY: ${{ secrets.VIDA_API_KEY }}
+          VIDA_LICENSE_KEY: ${{ secrets.VIDA_LICENSE_KEY }}
+          VIDA_ACTIVATION_KEY: ${{ secrets.VIDA_ACTIVATION_KEY }}
+          # Dibaca settings.gradle.kts saat configuration, untuk memilih URL
+          # maven repo dan mengunci content{includeGroup}.
+          VIDA_REPO_URL_SANDBOX: ${{ secrets.VIDA_REPO_URL_SANDBOX }}
+          VIDA_REPO_URL_PROD: ${{ secrets.VIDA_REPO_URL_PROD }}
+          VIDA_REPO_GROUP: ${{ secrets.VIDA_REPO_GROUP }}
           # Lewat env var, bukan interpolasi langsung ke shell, supaya isi
           # input tidak bisa disuntikkan sebagai perintah.
           COMMAND_BUILD: ${{ inputs.COMMAND_BUILD }}

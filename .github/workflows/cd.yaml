@@ -39,10 +39,13 @@ jobs:
       ENVIRONMENT: SIT
       COMMAND_BUILD: assembleSit${{ inputs.BUILD_TYPE }}
     secrets:
-      SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
-      SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
-      SDK_LICENSE_KEY: ${{ secrets.SDK_LICENSE_KEY }}
-      SDK_ACTIVATION_KEY: ${{ secrets.SDK_ACTIVATION_KEY }}
+      VIDA_REPO_KEY: ${{ secrets.VIDA_REPO_KEY }}
+      VIDA_API_KEY: ${{ secrets.VIDA_API_KEY }}
+      VIDA_LICENSE_KEY: ${{ secrets.VIDA_LICENSE_KEY }}
+      VIDA_ACTIVATION_KEY: ${{ secrets.VIDA_ACTIVATION_KEY }}
+      VIDA_REPO_URL_SANDBOX: ${{ secrets.VIDA_REPO_URL_SANDBOX }}
+      VIDA_REPO_URL_PROD: ${{ secrets.VIDA_REPO_URL_PROD }}
+      VIDA_REPO_GROUP: ${{ secrets.VIDA_REPO_GROUP }}
 
   uat:
     name: UAT
@@ -52,13 +55,24 @@ jobs:
       ENVIRONMENT: UAT
       COMMAND_BUILD: assembleUat${{ inputs.BUILD_TYPE }}
     secrets:
-      SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
-      SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
-      SDK_LICENSE_KEY: ${{ secrets.SDK_LICENSE_KEY }}
-      SDK_ACTIVATION_KEY: ${{ secrets.SDK_ACTIVATION_KEY }}
+      VIDA_REPO_KEY: ${{ secrets.VIDA_REPO_KEY }}
+      VIDA_API_KEY: ${{ secrets.VIDA_API_KEY }}
+      VIDA_LICENSE_KEY: ${{ secrets.VIDA_LICENSE_KEY }}
+      VIDA_ACTIVATION_KEY: ${{ secrets.VIDA_ACTIVATION_KEY }}
+      VIDA_REPO_URL_SANDBOX: ${{ secrets.VIDA_REPO_URL_SANDBOX }}
+      VIDA_REPO_URL_PROD: ${{ secrets.VIDA_REPO_URL_PROD }}
+      VIDA_REPO_GROUP: ${{ secrets.VIDA_REPO_GROUP }}
 
   prod:
     name: PROD
+    # JOB INI AKAN GAGAL, DAN ITU DISENGAJA.
+    # Environment PROD sengaja tidak diberi credential - yang produksi belum
+    # ada, dan mengisinya dengan credential sandbox justru berbahaya karena
+    # build prod jadi diam-diam memakai kredensial sandbox.
+    #
+    # Guard credential di build-android.yaml akan berhenti dengan pesan yang
+    # menyebut persis secret mana yang kosong. Job merah di sini adalah
+    # penanda pekerjaan yang belum selesai, bukan kerusakan.
     needs: sit
     uses: ./.github/workflows/build-android.yaml
     with:
@@ -67,7 +81,10 @@ jobs:
       # agregat itu justru yang memicu jebakan isProdBuild.
       COMMAND_BUILD: assembleProd${{ inputs.BUILD_TYPE }}
     secrets:
-      SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
-      SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
-      SDK_LICENSE_KEY: ${{ secrets.SDK_LICENSE_KEY }}
-      SDK_ACTIVATION_KEY: ${{ secrets.SDK_ACTIVATION_KEY }}
+      VIDA_REPO_KEY: ${{ secrets.VIDA_REPO_KEY }}
+      VIDA_API_KEY: ${{ secrets.VIDA_API_KEY }}
+      VIDA_LICENSE_KEY: ${{ secrets.VIDA_LICENSE_KEY }}
+      VIDA_ACTIVATION_KEY: ${{ secrets.VIDA_ACTIVATION_KEY }}
+      VIDA_REPO_URL_SANDBOX: ${{ secrets.VIDA_REPO_URL_SANDBOX }}
+      VIDA_REPO_URL_PROD: ${{ secrets.VIDA_REPO_URL_PROD }}
+      VIDA_REPO_GROUP: ${{ secrets.VIDA_REPO_GROUP }}
