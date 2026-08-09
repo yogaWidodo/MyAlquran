@@ -1,0 +1,123 @@
+# ============================================================================
+# FASE 0 — PEMBANDING POSITIF (positive control).
+#
+# probe-caller-two-envs.yaml melaporkan MISS untuk semua secret, termasuk di
+# job yang punya `environment:`. Ada dua penjelasan yang mungkin:
+#
+#   (H1) Reusable workflow memang tidak bisa membaca environment secret
+#        kalau secret-nya tidak dideklarasikan di on.workflow_call.secrets
+#   (H2) Secret-nya sendiri memang tidak terbaca dari mana pun (salah simpan)
+#
+# File ini memisahkan keduanya. Ini BUKAN reusable workflow — job-nya langsung
+# di sini, dengan `environment:` yang sama dan nama secret yang sama.
+#
+#   - Kalau di sini OK  -> H1 benar. Environment secret normal, yang bermasalah
+#                          khusus jalur workflow_call.
+#   - Kalau di sini MISS -> H2 benar. Setup secret-nya yang salah, dan hasil
+#                          probe sebelumnya tidak bisa dipakai.
+#
+# Sekalian membuktikan nilai per-environment memang berbeda:
+#   PROBE_A -> len 8 dan 13 ; PROBE_B -> len 19 dan 24
+#
+# ATURAN KEAMANAN: nilai secret TIDAK PERNAH di-print. Hanya panjang string.
+# workflow_dispatch ONLY.
+# ============================================================================
+name: probe-direct (positive control)
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  direct_probe_a:
+    name: direct + environment PROBE_A
+    runs-on: ubuntu-latest
+    environment: PROBE_A
+    steps:
+      - name: Probe secret presence
+        env:
+          PROBE_MODE: "job biasa + environment PROBE_A"
+          PROBE_KEY_A: ${{ secrets.PROBE_KEY_A }}
+          PROBE_KEY_B: ${{ secrets.PROBE_KEY_B }}
+          PROBE_KEY_MISSING: ${{ secrets.PROBE_KEY_MISSING }}
+        run: |
+          report() {
+            name="$1"
+            value="$2"
+            if [ -n "$value" ]; then
+              status="OK (len=${#value})"
+            else
+              status="MISS"
+            fi
+            printf '%-18s : %s\n' "$name" "$status"
+            printf '| `%s` | %s |\n' "$name" "$status" >> "$GITHUB_STEP_SUMMARY"
+          }
+          printf '### %s\n\n| secret | status |\n| --- | --- |\n' "$PROBE_MODE" >> "$GITHUB_STEP_SUMMARY"
+          echo "mode : $PROBE_MODE"
+          echo "------------------------------------------------"
+          report PROBE_KEY_A       "$PROBE_KEY_A"
+          report PROBE_KEY_B       "$PROBE_KEY_B"
+          report PROBE_KEY_MISSING "$PROBE_KEY_MISSING"
+          printf '\n' >> "$GITHUB_STEP_SUMMARY"
+
+  direct_probe_b:
+    name: direct + environment PROBE_B
+    runs-on: ubuntu-latest
+    environment: PROBE_B
+    steps:
+      - name: Probe secret presence
+        env:
+          PROBE_MODE: "job biasa + environment PROBE_B"
+          PROBE_KEY_A: ${{ secrets.PROBE_KEY_A }}
+          PROBE_KEY_B: ${{ secrets.PROBE_KEY_B }}
+          PROBE_KEY_MISSING: ${{ secrets.PROBE_KEY_MISSING }}
+        run: |
+          report() {
+            name="$1"
+            value="$2"
+            if [ -n "$value" ]; then
+              status="OK (len=${#value})"
+            else
+              status="MISS"
+            fi
+            printf '%-18s : %s\n' "$name" "$status"
+            printf '| `%s` | %s |\n' "$name" "$status" >> "$GITHUB_STEP_SUMMARY"
+          }
+          printf '### %s\n\n| secret | status |\n| --- | --- |\n' "$PROBE_MODE" >> "$GITHUB_STEP_SUMMARY"
+          echo "mode : $PROBE_MODE"
+          echo "------------------------------------------------"
+          report PROBE_KEY_A       "$PROBE_KEY_A"
+          report PROBE_KEY_B       "$PROBE_KEY_B"
+          report PROBE_KEY_MISSING "$PROBE_KEY_MISSING"
+          printf '\n' >> "$GITHUB_STEP_SUMMARY"
+
+  direct_no_environment:
+    name: direct TANPA environment (kontrol)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe secret presence
+        env:
+          PROBE_MODE: "job biasa TANPA environment"
+          PROBE_KEY_A: ${{ secrets.PROBE_KEY_A }}
+          PROBE_KEY_B: ${{ secrets.PROBE_KEY_B }}
+          PROBE_KEY_MISSING: ${{ secrets.PROBE_KEY_MISSING }}
+        run: |
+          report() {
+            name="$1"
+            value="$2"
+            if [ -n "$value" ]; then
+              status="OK (len=${#value})"
+            else
+              status="MISS"
+            fi
+            printf '%-18s : %s\n' "$name" "$status"
+            printf '| `%s` | %s |\n' "$name" "$status" >> "$GITHUB_STEP_SUMMARY"
+          }
+          printf '### %s\n\n| secret | status |\n| --- | --- |\n' "$PROBE_MODE" >> "$GITHUB_STEP_SUMMARY"
+          echo "mode : $PROBE_MODE"
+          echo "------------------------------------------------"
+          report PROBE_KEY_A       "$PROBE_KEY_A"
+          report PROBE_KEY_B       "$PROBE_KEY_B"
+          report PROBE_KEY_MISSING "$PROBE_KEY_MISSING"
+          printf '\n' >> "$GITHUB_STEP_SUMMARY"
