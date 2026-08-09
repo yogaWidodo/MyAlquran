@@ -70,6 +70,17 @@ dependencyResolutionManagement {
         //                                     padahal ikut meng-compile flavor
         //                                     prod. Resolusi artifact prod akan
         //                                     mencari ke server sandbox.
+        //
+        // DIBUKTIKAN 2026-08-09 lewat dua echo server di port berbeda:
+        //   ./gradlew :app:assembleRelease  -> APK prod terbangun, tapi server
+        //   prod menerima NOL request. Semua artifact ditarik dari sandbox.
+        //
+        // Dan heuristiknya lebih longgar dari yang terlihat: startParameter
+        // .taskNames ikut memuat ARGUMEN task, bukan cuma nama task. Terbukti
+        // pada task yang sama persis:
+        //   :app:dependencies --configuration prodReleaseCompileClasspath -> prod
+        //   :app:dependencies --configuration sitReleaseCompileClasspath  -> sandbox
+        // Jadi kata "prod" yang nyasar di argumen mana pun ikut menyalakannya.
         // -------------------------------------------------------------------
         maven {
             val isProdBuild = gradle.startParameter.taskNames.any {
