@@ -38,3 +38,18 @@ jobs:
     secrets:
       PROBE_KEY_A: ${{ secrets.PROBE_KEY_A }}
       PROBE_KEY_B: ${{ secrets.PROBE_KEY_B }}
+
+  # Job 3 - konfirmasi. Ekspresi `${{ secrets.* }}` di caller SAMA PERSIS
+  # dengan job 2, yang berbeda hanya ENVIRONMENT target.
+  #   Kalau hasilnya len 19/24 (nilai PROBE_B) -> ekspresi di blok `secrets:`
+  #   caller dievaluasi mengikuti environment job yang dipanggil.
+  #   Kalau hasilnya tetap len 8/13 -> nilainya terkunci ke sumber lain.
+  declared_and_forwarded_b:
+    name: "3. sama seperti 2, tapi environment PROBE_B"
+    uses: ./.github/workflows/probe-declared.yaml
+    with:
+      ENVIRONMENT: PROBE_B
+      LABEL: "di-forward dari caller, environment target PROBE_B"
+    secrets:
+      PROBE_KEY_A: ${{ secrets.PROBE_KEY_A }}
+      PROBE_KEY_B: ${{ secrets.PROBE_KEY_B }}
