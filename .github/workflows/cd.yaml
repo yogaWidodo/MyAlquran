@@ -1,0 +1,64 @@
+# ============================================================================
+# FASE 2 - caller. Meniru bentuk cd.yaml di kantor, tapi berhenti di assemble.
+#
+# Bentuk asli di kantor: ci -> sit -> (uat, prd-apk) -> prd-aab, memanggil
+# reusable workflow LINTAS-REPO di self-hosted runner. Di sini rantainya
+# disederhanakan jadi sit -> (uat, prod) dan reusable-nya lokal.
+#
+# DETAIL YANG SENGAJA DIPERTAHANKAN, JANGAN "DIBETULKAN":
+#   Blok `secrets:` di bawah ditulis EKSPLISIT, bukan `secrets: inherit`.
+#   Itu kondisi asli di kantor dan justru itu yang bikin Fase 0 jadi
+#   pertanyaan. Mengubahnya jadi `inherit` menghapus hal yang mau dilatih.
+#
+# Fase 0 membuktikan ekspresi `${{ secrets.* }}` di blok ini ter-resolve
+# mengikuti environment job yang dipanggil, walaupun job caller sendiri tidak
+# punya `environment:`. Jadi nilainya cukup disimpan sebagai environment
+# secret biasa - tidak perlu repository secret ber-suffix per-env.
+#
+# workflow_dispatch ONLY - tidak pernah jalan sendiri saat push.
+# ============================================================================
+name: cd
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sit:
+    name: SIT
+    uses: ./.github/workflows/build-android.yaml
+    with:
+      ENVIRONMENT: SIT
+      COMMAND_BUILD: assembleSitRelease
+    secrets:
+      SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
+      SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
+      SDK_LICENSE_KEY: ${{ secrets.SDK_LICENSE_KEY }}
+      SDK_ACTIVATION_KEY: ${{ secrets.SDK_ACTIVATION_KEY }}
+
+  uat:
+    name: UAT
+    needs: sit
+    uses: ./.github/workflows/build-android.yaml
+    with:
+      ENVIRONMENT: UAT
+      COMMAND_BUILD: assembleUatRelease
+    secrets:
+      SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
+      SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
+      SDK_LICENSE_KEY: ${{ secrets.SDK_LICENSE_KEY }}
+      SDK_ACTIVATION_KEY: ${{ secrets.SDK_ACTIVATION_KEY }}
+
+  prod:
+    name: PROD
+    needs: sit
+    uses: ./.github/workflows/build-android.yaml
+    with:
+      ENVIRONMENT: PROD
+      # Flavor eksplisit. JANGAN diganti jadi `assembleRelease` - task agregat
+      # itu justru yang memicu jebakan isProdBuild.
+      COMMAND_BUILD: assembleProdRelease
+    secrets:
+      SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
+      SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
+      SDK_LICENSE_KEY: ${{ secrets.SDK_LICENSE_KEY }}
+      SDK_ACTIVATION_KEY: ${{ secrets.SDK_ACTIVATION_KEY }}

@@ -1,0 +1,123 @@
+# ============================================================================
+# FASE 2 - reusable build workflow. Versi ringkas dari pipeline kantor.
+#
+# Yang ditiru dari kantor:
+#   1. `environment:` ada di JOB LEVEL workflow ini, bukan di caller. Inilah
+#      yang membuat secret per-environment ter-resolve.
+#   2. Task build ber-flavor EKSPLISIT (assembleSitRelease), bukan task
+#      agregat. Lihat jebakan isProdBuild di settings.gradle.kts - task
+#      agregat seperti `assembleRelease` menarik artifact prod dari URL
+#      sandbox tanpa memberi peringatan apa pun.
+#
+# Yang TIDAK ditiru (di luar jangkauan repo pribadi, dan memang diminta
+# berhenti di assemble): app-shielding pihak ketiga, upload ke object
+# storage, upload mapping Crashlytics.
+#
+# TEMUAN FASE 0 yang membentuk file ini: blok `secrets:` di bawah WAJIB ada.
+# Tanpa deklarasi ini, `${{ secrets.SDK_* }}` di step Assemble akan kosong
+# walaupun job punya `environment:`. Dibuktikan lewat run nyata, bukan asumsi.
+# `required: false` dipilih supaya caller yang belum mengirim secret ini tidak
+# ikut mati - di kantor reusable workflow dipakai banyak repo.
+# ============================================================================
+name: build-android (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        description: "GitHub Environment sumber credential (SIT / UAT / PROD)"
+        required: true
+        type: string
+      COMMAND_BUILD:
+        description: "Task Gradle ber-flavor eksplisit, mis. assembleSitRelease"
+        required: true
+        type: string
+    secrets:
+      SDK_REPO_KEY:
+        required: false
+      SDK_API_KEY:
+        required: false
+      SDK_LICENSE_KEY:
+        required: false
+      SDK_ACTIVATION_KEY:
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build ${{ inputs.ENVIRONMENT }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.ENVIRONMENT }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # Guard sebelum build. Kalau credential tidak sampai, lebih baik gagal di
+      # sini dengan pesan jelas daripada gagal 3 menit kemudian di dalam Gradle.
+      # Nilai secret TIDAK PERNAH dicetak - hanya ada/tidak dan panjangnya.
+      - name: Cek credential sampai ke runner
+        env:
+          PROBE_ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
+          SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
+          SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
+          SDK_LICENSE_KEY: ${{ secrets.SDK_LICENSE_KEY }}
+          SDK_ACTIVATION_KEY: ${{ secrets.SDK_ACTIVATION_KEY }}
+        run: |
+          missing=0
+          report() {
+            name="$1"
+            value="$2"
+            if [ -n "$value" ]; then
+              printf '%-20s : OK (len=%s)\n' "$name" "${#value}"
+            else
+              printf '%-20s : MISS\n' "$name"
+              missing=$((missing + 1))
+            fi
+          }
+          echo "environment : $PROBE_ENVIRONMENT"
+          echo "--------------------------------------------"
+          report SDK_REPO_KEY       "$SDK_REPO_KEY"
+          report SDK_API_KEY        "$SDK_API_KEY"
+          report SDK_LICENSE_KEY    "$SDK_LICENSE_KEY"
+          report SDK_ACTIVATION_KEY "$SDK_ACTIVATION_KEY"
+          if [ "$missing" -gt 0 ]; then
+            echo
+            echo "::error::$missing credential tidak sampai ke runner." \
+                 "Cek environment secret di '$PROBE_ENVIRONMENT' dan blok secrets: di caller."
+            exit 1
+          fi
+
+      - name: Assemble
+        env:
+          # Inilah jalur yang dilatih: env var di step build. Helper
+          # sdkSecret() di Gradle memprioritaskan env var di atas
+          # local.properties, dan local.properties memang tidak ada di runner.
+          SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
+          SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
+          SDK_LICENSE_KEY: ${{ secrets.SDK_LICENSE_KEY }}
+          SDK_ACTIVATION_KEY: ${{ secrets.SDK_ACTIVATION_KEY }}
+          # Lewat env var, bukan interpolasi langsung ke shell, supaya isi
+          # input tidak bisa disuntikkan sebagai perintah.
+          COMMAND_BUILD: ${{ inputs.COMMAND_BUILD }}
+        run: ./gradlew "$COMMAND_BUILD" --console=plain --stacktrace
+
+      # Supaya APK-nya bisa diunduh langsung dari halaman run ini.
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-${{ inputs.ENVIRONMENT }}
+          path: app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
+          retention-days: 7
