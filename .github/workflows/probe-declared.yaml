@@ -1,0 +1,71 @@
+# ============================================================================
+# FASE 0 — lanjutan. Reusable workflow yang MENDEKLARASIKAN secret-nya.
+#
+# Bedanya dengan probe-env-secret.yaml: file ini PUNYA blok
+# `on.workflow_call.secrets` dengan `required: false`.
+#
+# Yang mau dijawab: apakah cukup dengan MENDEKLARASIKAN saja (tanpa caller
+# mem-forward apa pun), environment secret lalu ter-resolve di job yang
+# punya `environment:`?
+#
+#   - Kalau OK  -> di project kantor cukup tambah deklarasi `required: false`
+#                  di reusable workflow. Caller lain tidak perlu disentuh.
+#   - Kalau MISS -> deklarasi saja tidak cukup, caller wajib mem-forward.
+#
+# `required: false` dipilih supaya caller lain yang tidak mengirim secret ini
+# tidak ikut mati.
+#
+# ATURAN KEAMANAN: nilai secret TIDAK PERNAH di-print.
+# ============================================================================
+name: probe-declared (reusable, secrets dideklarasikan)
+
+on:
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        description: "Nama GitHub Environment yang di-attach ke job"
+        required: true
+        type: string
+      LABEL:
+        description: "Label skenario, untuk memperjelas log"
+        required: true
+        type: string
+    secrets:
+      PROBE_KEY_A:
+        required: false
+      PROBE_KEY_B:
+        required: false
+
+permissions: {}
+
+jobs:
+  probe:
+    name: probe
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.ENVIRONMENT }}
+    steps:
+      - name: Probe secret presence
+        env:
+          PROBE_LABEL: ${{ inputs.LABEL }}
+          PROBE_ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
+          PROBE_KEY_A: ${{ secrets.PROBE_KEY_A }}
+          PROBE_KEY_B: ${{ secrets.PROBE_KEY_B }}
+        run: |
+          report() {
+            name="$1"
+            value="$2"
+            if [ -n "$value" ]; then
+              status="OK (len=${#value})"
+            else
+              status="MISS"
+            fi
+            printf '%-18s : %s\n' "$name" "$status"
+            printf '| `%s` | %s |\n' "$name" "$status" >> "$GITHUB_STEP_SUMMARY"
+          }
+          printf '### %s\n\n| secret | status |\n| --- | --- |\n' "$PROBE_LABEL" >> "$GITHUB_STEP_SUMMARY"
+          echo "skenario    : $PROBE_LABEL"
+          echo "environment : $PROBE_ENVIRONMENT"
+          echo "------------------------------------------------"
+          report PROBE_KEY_A "$PROBE_KEY_A"
+          report PROBE_KEY_B "$PROBE_KEY_B"
+          printf '\n' >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,40 @@
+# ============================================================================
+# FASE 0 — caller untuk probe-declared.yaml. Dua skenario dalam satu run.
+#
+# Job 1 `declared_not_passed`
+#   Reusable mendeklarasikan secret, caller TIDAK mem-forward apa pun.
+#   Menguji: apakah deklarasi saja sudah cukup untuk environment secret?
+#
+# Job 2 `declared_and_forwarded`
+#   Caller mem-forward `${{ secrets.PROBE_KEY_A }}` secara eksplisit.
+#   PENTING: ekspresi ini dievaluasi di SCOPE CALLER, dan job caller tidak
+#   punya `environment:`. Jadi job ini menguji klaim yang kamu sebut di brief:
+#   apakah caller bisa "melihat" environment secret untuk diteruskan?
+#   Kalau MISS, artinya nilainya harus disimpan sebagai repository secret
+#   dengan suffix per-environment.
+#
+# workflow_dispatch ONLY.
+# ============================================================================
+name: probe-caller (declared secrets)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  declared_not_passed:
+    name: "1. dideklarasikan, TIDAK di-forward"
+    uses: ./.github/workflows/probe-declared.yaml
+    with:
+      ENVIRONMENT: PROBE_A
+      LABEL: "dideklarasikan required:false, caller TIDAK mem-forward"
+    # Sengaja tanpa blok `secrets:`.
+
+  declared_and_forwarded:
+    name: "2. dideklarasikan + di-forward dari caller"
+    uses: ./.github/workflows/probe-declared.yaml
+    with:
+      ENVIRONMENT: PROBE_A
+      LABEL: "dideklarasikan + di-forward dari scope caller (caller tanpa environment)"
+    secrets:
+      PROBE_KEY_A: ${{ secrets.PROBE_KEY_A }}
+      PROBE_KEY_B: ${{ secrets.PROBE_KEY_B }}
