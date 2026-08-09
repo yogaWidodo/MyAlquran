@@ -1,0 +1,30 @@
+# ============================================================================
+# FASE 0 — caller untuk probe-env-secret.yaml (satu environment per run).
+#
+# workflow_dispatch ONLY. Tidak ada trigger `push`/`pull_request`, supaya
+# tidak pernah jalan tanpa sengaja.
+# ============================================================================
+name: probe-caller (single env)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ENVIRONMENT:
+        description: "Environment yang mau di-probe"
+        required: true
+        default: PROBE_A
+        type: choice
+        options:
+          - PROBE_A
+          - PROBE_B
+
+jobs:
+  probe:
+    name: probe ${{ inputs.ENVIRONMENT }}
+    uses: ./.github/workflows/probe-env-secret.yaml
+    with:
+      ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
+
+    # >>> INTI EKSPERIMEN <<<
+    # Sengaja TIDAK ADA blok `secrets:` dan TIDAK ADA `secrets: inherit`.
+    # Caller ini tidak menyerahkan satu pun secret ke reusable workflow.

@@ -1,0 +1,35 @@
+# ============================================================================
+# FASE 0 — varian caller: dua environment sekaligus dalam satu run.
+#
+# Gunanya: membuktikan bukan sekadar "ada isinya", tapi nilai yang ter-resolve
+# memang milik environment yang benar. Karena nilai secret tidak boleh
+# di-print, pembedanya adalah PANJANG string — nilai dummy di tiap environment
+# sengaja dibedakan panjangnya, jadi angka `len=` di log sudah cukup.
+#
+#   PROBE_A -> PROBE_KEY_A len=8  , PROBE_KEY_B len=13
+#   PROBE_B -> PROBE_KEY_A len=19 , PROBE_KEY_B len=24
+#
+# Kalau kedua job menunjukkan angka len yang sama, berarti yang ter-resolve
+# bukan nilai per-environment.
+#
+# workflow_dispatch ONLY.
+# ============================================================================
+name: probe-caller (two envs)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe_a:
+    name: PROBE_A
+    uses: ./.github/workflows/probe-env-secret.yaml
+    with:
+      ENVIRONMENT: PROBE_A
+    # Tanpa `secrets:` dan tanpa `secrets: inherit`.
+
+  probe_b:
+    name: PROBE_B
+    uses: ./.github/workflows/probe-env-secret.yaml
+    with:
+      ENVIRONMENT: PROBE_B
+    # Tanpa `secrets:` dan tanpa `secrets: inherit`.
