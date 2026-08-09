@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  LATIHAN VIDA.
+
+  Android 9 (API 28) ke atas memblokir HTTP polos secara default. Stub backend
+  latihan jalan di HTTP, jadi cleartext harus diizinkan - TAPI hanya untuk host
+  stub, bukan untuk seluruh aplikasi. Memakai android:usesCleartextTraffic="true"
+  di manifest akan membuka HTTP untuk semua host, termasuk API produksi.
+
+  Kalau IP mesinmu berubah, ubah di sini DAN di Constants.BASE_URL_VIDA.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Mesin dev di jaringan lokal. -->
+        <domain includeSubdomains="false">192.168.1.107</domain>
+        <!-- Alias host loopback dari emulator Android. -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>

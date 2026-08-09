@@ -19,4 +19,16 @@
     <string name="cari_berita">Cari Berita</string>
     <string name="date">Date</string>
     <string name="artinya">Artinya:</string>
+
+    <!-- Latihan VIDA -->
+    <string name="vida">VIDA</string>
+    <string name="vida_title">Liveness Decision (latihan)</string>
+    <string name="vida_submit">Capture dummy → kirim</string>
+    <string name="vida_submit_force_error">Capture dummy → paksa error server</string>
+    <string name="vida_retry">Coba lagi</string>
+    <string name="vida_error_title">Gagal</string>
+    <string name="vida_error_unknown">Terjadi kesalahan yang tidak diketahui.</string>
+    <string name="vida_error_empty_body">Server membalas sukses tapi body-nya kosong.</string>
+    <string name="vida_endpoint">POST %1$s</string>
+    <string name="vida_payload_summary">liveness=%1$.2f · manipulation=%2$.2f · %3$s</string>
 </resources>

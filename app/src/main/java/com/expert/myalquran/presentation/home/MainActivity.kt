@@ -16,6 +16,7 @@ import com.expert.myalquran.core.utils.DataStatus
 import com.expert.myalquran.databinding.ActivityMainBinding
 import com.expert.myalquran.presentation.detail.DetailActivity
 import com.expert.myalquran.presentation.favorite.FavoriteActivity
+import com.expert.myalquran.presentation.vida.VidaActivity
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
@@ -87,18 +88,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun navigationMenu() {
-//        binding.bottomNavigationView.setOnItemSelectedListener {
-//            when (it.itemId) {
-//
-//                R.id.favorite -> {
-//                    val intent = Intent(this@MainActivity, FavoriteActivity::class.java)
-//                    startActivity(intent)
-//                    true
-//                }
-//
-//                else -> false
-//            }
-//        }
+        binding.bottomNavigationView.selectedItemId = R.id.home
+        binding.bottomNavigationView.setOnItemSelectedListener {
+            when (it.itemId) {
+
+                R.id.favorite -> {
+                    val intent = Intent(this@MainActivity, FavoriteActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.home -> {
+                    val intent = Intent(this@MainActivity, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    startActivity(intent)
+                    true
+                }
+
+                R.id.vida -> {
+                    val intent = Intent(this@MainActivity, VidaActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                else -> false
+            }
+        }
     }
 
     private fun getSurah() {

@@ -3,6 +3,7 @@ package com.expert.myalquran.core.di
 import android.app.Application
 import com.expert.myalquran.core.di.disurah.apiSurahModule
 import com.expert.myalquran.core.di.disurah.surahModule
+import com.expert.myalquran.core.di.divida.vidaModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -11,7 +12,7 @@ open class MyApplication : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@MyApplication)
-            modules(apiSurahModule, surahModule)
+            modules(apiSurahModule, surahModule, vidaModule)
         }
     }
 }

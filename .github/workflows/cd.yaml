@@ -21,6 +21,15 @@ name: cd
 
 on:
   workflow_dispatch:
+    inputs:
+      BUILD_TYPE:
+        description: "Debug menghasilkan APK ter-sign debug (bisa langsung dipasang). Release menghasilkan APK unsigned."
+        required: true
+        default: Debug
+        type: choice
+        options:
+          - Debug
+          - Release
 
 jobs:
   sit:
@@ -28,7 +37,7 @@ jobs:
     uses: ./.github/workflows/build-android.yaml
     with:
       ENVIRONMENT: SIT
-      COMMAND_BUILD: assembleSitRelease
+      COMMAND_BUILD: assembleSit${{ inputs.BUILD_TYPE }}
     secrets:
       SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
       SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
@@ -41,7 +50,7 @@ jobs:
     uses: ./.github/workflows/build-android.yaml
     with:
       ENVIRONMENT: UAT
-      COMMAND_BUILD: assembleUatRelease
+      COMMAND_BUILD: assembleUat${{ inputs.BUILD_TYPE }}
     secrets:
       SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
       SDK_API_KEY: ${{ secrets.SDK_API_KEY }}
@@ -54,9 +63,9 @@ jobs:
     uses: ./.github/workflows/build-android.yaml
     with:
       ENVIRONMENT: PROD
-      # Flavor eksplisit. JANGAN diganti jadi `assembleRelease` - task agregat
-      # itu justru yang memicu jebakan isProdBuild.
-      COMMAND_BUILD: assembleProdRelease
+      # Flavor tetap EKSPLISIT. JANGAN diganti jadi `assembleRelease` - task
+      # agregat itu justru yang memicu jebakan isProdBuild.
+      COMMAND_BUILD: assembleProd${{ inputs.BUILD_TYPE }}
     secrets:
       SDK_REPO_KEY: ${{ secrets.SDK_REPO_KEY }}
       SDK_API_KEY: ${{ secrets.SDK_API_KEY }}

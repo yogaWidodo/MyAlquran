@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
-        android:id="@+id/favorite"
-        android:icon="@drawable/favorite_toggle"
-        android:title="@string/favorite" />
+        android:id="@+id/home"
+        android:icon="@drawable/baseline_home_24"
+        android:title="@string/home" />
 
     <item
         android:id="@+id/news"
@@ -11,7 +12,13 @@
         android:title="@string/news" />
 
     <item
-        android:id="@+id/setting"
-        android:icon="@drawable/baseline_settings_24"
-        android:title="@string/setting" />
+        android:id="@+id/favorite"
+        android:icon="@drawable/favorite_toggle"
+        android:title="@string/favorite" />
+
+    <item
+        android:id="@+id/vida"
+        android:icon="@drawable/ic_vida_24"
+        android:title="@string/vida" />
+
 </menu>
